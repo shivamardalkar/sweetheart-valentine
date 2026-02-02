@@ -28,7 +28,7 @@ body {
   overflow: hidden;
 }
 
-/* CARD */
+/* ================= CARD ================= */
 .card {
   background: var(--glass);
   backdrop-filter: var(--blur);
@@ -44,14 +44,11 @@ body {
 h1 { color: var(--primary); margin: 0; }
 .subtitle { margin-top: 10px; }
 
-/* BUTTONS */
+/* ================= BUTTON AREA ================= */
 .buttons {
   margin-top: 28px;
-  display: flex;
-  justify-content: center;
-  gap: 16px;
   position: relative;
-  height: 60px; /* important: keeps movement bounded */
+  height: 70px;
 }
 
 button {
@@ -60,32 +57,42 @@ button {
   font-size: 1rem;
   border-radius: 999px;
   cursor: pointer;
-  transition: transform 0.2s ease;
   touch-action: manipulation;
+  transition: transform 0.2s ease;
 }
 
 #yesBtn {
   background: linear-gradient(135deg, var(--primary), var(--secondary));
   color: white;
+  position: relative;
+  z-index: 2;
 }
 
 #yesBtn:hover { transform: scale(1.08); }
 
 #noBtn {
-  background: rgba(255,255,255,0.9);
+  background: rgba(255,255,255,0.95);
   position: absolute;
   left: 55%;
   top: 0;
 }
 
-/* MESSAGE */
+/* Shake animation */
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  50% { transform: translateX(6px); }
+  75% { transform: translateX(-4px); }
+}
+
+/* ================= MESSAGE ================= */
 #message {
   margin-top: 22px;
   color: var(--primary);
   min-height: 24px;
 }
 
-/* FOREVER SCREEN */
+/* ================= FOREVER ================= */
 #forever {
   position: fixed;
   inset: 0;
@@ -113,7 +120,7 @@ button {
   50% { transform: scale(1.15); }
 }
 
-/* COUNTER */
+/* ================= COUNTER ================= */
 .counter {
   display: grid;
   grid-template-columns: repeat(4, auto);
@@ -175,33 +182,60 @@ canvas {
 <script>
 const noBtn = document.getElementById("noBtn");
 const yesBtn = document.getElementById("yesBtn");
+const btnArea = document.getElementById("btnArea");
 const msg = document.getElementById("message");
 const forever = document.getElementById("forever");
 const music = document.getElementById("music");
-const btnArea = document.getElementById("btnArea");
 
-/* SAFE ESCAPE (bounded inside button area) */
-function escape() {
-  const areaRect = btnArea.getBoundingClientRect();
+let escapeCount = 0;
+const MAX_ESCAPES = 7;
+
+/* 🧲 Magnetic escape */
+function magneticEscape(e) {
+  if (escapeCount >= MAX_ESCAPES) return;
+
   const btnRect = noBtn.getBoundingClientRect();
+  const areaRect = btnArea.getBoundingClientRect();
 
-  const maxX = areaRect.width - btnRect.width;
-  const maxY = areaRect.height - btnRect.height;
+  const cx = btnRect.left + btnRect.width / 2;
+  const cy = btnRect.top + btnRect.height / 2;
 
-  const x = Math.random() * maxX;
-  const y = Math.random() * maxY;
+  const px = e.clientX || (e.touches && e.touches[0].clientX);
+  const py = e.clientY || (e.touches && e.touches[0].clientY);
 
-  noBtn.style.left = x + "px";
-  noBtn.style.top = y + "px";
+  const dx = cx - px;
+  const dy = cy - py;
+  const distance = Math.hypot(dx, dy);
+
+  if (distance < 80) {
+    escapeCount++;
+
+    if (distance < 40) {
+      noBtn.style.animation = "shake 0.3s";
+      setTimeout(() => noBtn.style.animation = "", 300);
+    }
+
+    let nx = noBtn.offsetLeft + dx * 0.4;
+    let ny = noBtn.offsetTop + dy * 0.4;
+
+    nx = Math.max(0, Math.min(nx, areaRect.width - btnRect.width));
+    ny = Math.max(0, Math.min(ny, areaRect.height - btnRect.height));
+
+    noBtn.style.left = nx + "px";
+    noBtn.style.top = ny + "px";
+
+    msg.textContent = "😄 Nice try!";
+  }
+
+  /* ♿ Accessibility fallback */
+  if (escapeCount === MAX_ESCAPES) {
+    noBtn.textContent = "Okay… you win 😳";
+    msg.textContent = "I’ll stop running now 💖";
+  }
 }
 
-/* Trigger escape only when close */
-["pointerenter", "touchstart"].forEach(evt => {
-  noBtn.addEventListener(evt, (e) => {
-    e.preventDefault();
-    escape();
-    msg.textContent = "😄 Not so easy!";
-  });
+["mousemove", "touchmove"].forEach(evt => {
+  btnArea.addEventListener(evt, magneticEscape, { passive: false });
 });
 
 /* YES */
@@ -213,7 +247,7 @@ yesBtn.onclick = () => {
   setTimeout(() => forever.style.opacity = 1, 3000);
 };
 
-/* HEARTS */
+/* ❤️ HEARTS */
 function hearts() {
   setInterval(() => {
     const h = document.createElement("div");
@@ -228,7 +262,7 @@ function hearts() {
   }, 300);
 }
 
-/* FIREWORKS */
+/* 🎆 FIREWORKS */
 const canvas = document.getElementById("fx");
 const ctx = canvas.getContext("2d");
 canvas.width = innerWidth;
@@ -261,7 +295,7 @@ function animate() {
   requestAnimationFrame(animate);
 }
 
-/* COUNTER */
+/* ⏱ COUNTER */
 const startDate = new Date("2023-09-22T00:00:00");
 setInterval(() => {
   let diff = Math.floor((new Date() - startDate)/1000);
