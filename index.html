@@ -60,7 +60,7 @@ h1 {
   font-size: 1.1rem;
 }
 
-/* ===== BUTTONS (UNCHANGED) ===== */
+/* ===== BUTTONS (UNCHANGED LAYOUT) ===== */
 .buttons {
   margin-top: 28px;
   display: flex;
@@ -74,12 +74,23 @@ button {
   font-size: 1rem;
   border-radius: 999px;
   cursor: pointer;
-  transition: transform 0.15s ease;
+  transition: transform 0.15s ease, box-shadow 0.3s ease;
 }
 
 #yesBtn {
   background: linear-gradient(135deg, var(--primary), var(--secondary));
   color: white;
+}
+
+/* 🌟 YES BUTTON GLOW (RESTORED) */
+@keyframes yesGlow {
+  0%   { box-shadow: 0 0 0 rgba(255,46,99,0); }
+  50%  { box-shadow: 0 0 18px rgba(255,46,99,0.9); }
+  100% { box-shadow: 0 0 0 rgba(255,46,99,0); }
+}
+
+#yesBtn.glow {
+  animation: yesGlow 1.6s ease-in-out infinite;
 }
 
 #noBtn {
@@ -246,11 +257,15 @@ const jokes = [
 ];
 let j = 0;
 
+/* ⭐ YES BUTTON GLOW AFTER 5 SECONDS (RESTORED) */
+const glowTimer = setTimeout(() => {
+  yesBtn.classList.add("glow");
+}, 5000);
+
 /* =======================
    FUNNY NO BUTTON LOGIC
-   (ONLY behavior changed)
+   (ONLY BEHAVIOR CHANGED)
 ======================= */
-
 function moveNoAway(x, y) {
   const rect = noBtn.getBoundingClientRect();
   const cx = rect.left + rect.width / 2;
@@ -289,6 +304,9 @@ noBtn.addEventListener("click", (e) => {
 
 /* YES */
 yesBtn.onclick = () => {
+  clearTimeout(glowTimer);      // stop glow
+  yesBtn.classList.remove("glow");
+
   music.play();
   msg.textContent = "You just made me the happiest person alive 💖";
   fireworks();
