@@ -91,7 +91,7 @@ button {
 #yesBtn:hover { transform: scale(1.08); }
 
 #noBtn {
-  background: rgba(255,255,255,0.7);
+  background: rgba(255,255,255,0.75);
   position: relative;
   z-index: 1;
 }
@@ -155,7 +155,6 @@ canvas {
 #ring {
   font-size: 90px;
   margin: 18px 0;
-  opacity: 0;
   animation:
     ringDrop 1.8s ease forwards,
     ringGlow 2.5s ease-in-out infinite 1.8s;
@@ -169,12 +168,6 @@ canvas {
 @keyframes ringGlow {
   0%,100% { filter: drop-shadow(0 0 10px gold); }
   50%     { filter: drop-shadow(0 0 25px gold); }
-}
-
-#forever p {
-  font-size: 1.15rem;
-  line-height: 1.6;
-  max-width: 85%;
 }
 
 /* ===== COUNTER ===== */
@@ -264,53 +257,42 @@ const music  = document.getElementById("music");
 const forever= document.getElementById("forever");
 const btnArea= document.getElementById("btnArea");
 
-/* Funny NO */
+/* Funny NO messages (never ending 😄) */
 const jokes = [
-  "Nice try 😏 but you’re stuck with me ❤️",
-  "Oops… NO is under maintenance 😂",
-  "My heart already said YES 💖",
-  "Even this button ships us 💕",
   "Sweetheart… think again 🥺",
-  "Okay okay… I tried 😄"
+  "My heart skipped 💔",
+  "I’ll bring chocolates 🍫",
+  "Flowers too 🌹",
+  "Unlimited hugs 🤗",
+  "You’re smiling 😏",
+  "This NO button is shy 🙈",
+  "Even destiny says YES 💕",
+  "Plot twist: NO is not allowed 😌",
+  "Okay okay… just try YES once ❤️"
 ];
 let j = 0;
-let escapeCount = 0;
-const MAX_ESCAPES = 7;
 
-/* MAGNETIC + SHAKE NO BUTTON (SAFE & BOUNDED) */
+/* MAGNETIC + SHAKE NO BUTTON (STABLE & SAFE) */
 btnArea.addEventListener("mousemove", handleMove);
 btnArea.addEventListener("touchmove", handleMove, { passive: false });
 
 function handleMove(e) {
-  if (escapeCount >= MAX_ESCAPES) return;
-
   const btnRect = noBtn.getBoundingClientRect();
-  const areaRect = btnArea.getBoundingClientRect();
-
   const px = e.touches ? e.touches[0].clientX : e.clientX;
   const cx = btnRect.left + btnRect.width / 2;
-
   const dx = cx - px;
   const distance = Math.abs(dx);
 
   if (distance < 80) {
-    escapeCount++;
-
     if (distance < 40) {
       noBtn.style.animation = "shake 0.3s";
       setTimeout(() => noBtn.style.animation = "", 300);
     }
 
-    let offsetX = Math.max(-40, Math.min(40, dx * 0.4));
+    const offsetX = Math.max(-40, Math.min(40, dx * 0.4));
     noBtn.style.transform = `translateX(${offsetX}px)`;
 
     msg.textContent = jokes[j++ % jokes.length];
-  }
-
-  if (escapeCount === MAX_ESCAPES) {
-    noBtn.style.transform = "translateX(0)";
-    noBtn.textContent = "Okay… you win 😳";
-    msg.textContent = "I’ll stop running now 💖";
   }
 }
 
