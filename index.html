@@ -20,7 +20,8 @@
 body {
   margin: 0;
   min-height: 100vh;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+               Roboto, Helvetica, Arial, sans-serif;
   background: linear-gradient(135deg, var(--bg1), var(--bg2));
   display: flex;
   justify-content: center;
@@ -28,7 +29,7 @@ body {
   overflow: hidden;
 }
 
-/* CARD */
+/* ===== GLASS CARD ===== */
 .card {
   background: var(--glass);
   backdrop-filter: var(--blur);
@@ -36,21 +37,35 @@ body {
   padding: 40px 28px;
   width: min(92%, 420px);
   text-align: center;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.25);
-  position: relative;
+  box-shadow:
+    0 20px 60px rgba(0,0,0,0.25),
+    inset 0 0 0 1px rgba(255,255,255,0.2);
+  animation: cardIn 1.2s ease;
   z-index: 2;
 }
 
-h1 { color: var(--primary); margin: 0; }
-.subtitle { margin-top: 10px; }
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(40px) scale(0.95); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
 
-/* BUTTONS */
+h1 {
+  margin: 0;
+  font-size: 1.9rem;
+  color: var(--primary);
+}
+
+.subtitle {
+  margin-top: 10px;
+  font-size: 1.1rem;
+}
+
+/* ===== BUTTONS ===== */
 .buttons {
   margin-top: 28px;
   display: flex;
   justify-content: center;
   gap: 16px;
-  position: relative;
 }
 
 button {
@@ -59,8 +74,7 @@ button {
   font-size: 1rem;
   border-radius: 999px;
   cursor: pointer;
-  touch-action: manipulation;
-  transition: transform 0.15s ease;
+  transition: transform 0.2s ease;
 }
 
 #yesBtn {
@@ -71,20 +85,31 @@ button {
 #yesBtn:hover { transform: scale(1.08); }
 
 #noBtn {
-  background: rgba(255,255,255,0.9);
-  position: absolute;
-  left: 50%;
-  transform: translateX(60px);
+  background: rgba(255,255,255,0.7);
+  position: relative;
 }
 
-/* MESSAGE */
 #message {
   margin-top: 22px;
+  font-size: 1.05rem;
   color: var(--primary);
   min-height: 24px;
 }
 
-/* FOREVER SCREEN */
+/* ===== CANVAS ===== */
+canvas {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* ===== HEARTS ===== */
+@keyframes float {
+  from { transform: translateY(0); opacity: 1; }
+  to   { transform: translateY(-120vh); opacity: 0; }
+}
+
+/* ===== FOREVER SCREEN ===== */
 #forever {
   position: fixed;
   inset: 0;
@@ -101,19 +126,45 @@ button {
   z-index: 10;
 }
 
+#forever h2 {
+  font-size: 2.6rem;
+  margin-bottom: 6px;
+}
+
+#dateText {
+  font-size: 1rem;
+  opacity: 0.85;
+  margin-bottom: 14px;
+}
+
 #ring {
   font-size: 90px;
   margin: 18px 0;
-  animation: pulse 2s infinite;
+  opacity: 0;
+  animation:
+    ringDrop 1.8s ease forwards,
+    ringGlow 2.5s ease-in-out infinite 1.8s;
 }
 
-@keyframes pulse {
-  0%,100% { transform: scale(1); }
-  50% { transform: scale(1.15); }
+@keyframes ringDrop {
+  from { transform: translateY(-200px) scale(0.3); opacity: 0; }
+  to   { transform: translateY(0) scale(1); opacity: 1; }
 }
 
-/* COUNTER */
+@keyframes ringGlow {
+  0%,100% { filter: drop-shadow(0 0 10px gold); }
+  50%     { filter: drop-shadow(0 0 25px gold); }
+}
+
+#forever p {
+  font-size: 1.15rem;
+  line-height: 1.6;
+  max-width: 85%;
+}
+
+/* ===== COUNTER ===== */
 .counter {
+  margin-top: 20px;
   display: grid;
   grid-template-columns: repeat(4, auto);
   gap: 14px;
@@ -121,19 +172,20 @@ button {
 
 .counter div {
   background: rgba(255,255,255,0.15);
-  padding: 12px;
+  padding: 12px 14px;
   border-radius: 16px;
+  min-width: 70px;
 }
 
-canvas {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
+.counter span {
+  display: block;
+  font-size: 1.4rem;
+  font-weight: bold;
 }
 
-@keyframes float {
-  from { transform: translateY(0); opacity: 1; }
-  to { transform: translateY(-120vh); opacity: 0; }
+.counter small {
+  font-size: 0.75rem;
+  opacity: 0.85;
 }
 </style>
 </head>
@@ -141,9 +193,10 @@ canvas {
 <body>
 
 <audio id="music" loop>
-  <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_1c6d8a2b7f.mp3">
+  <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_1c6d8a2b7f.mp3" type="audio/mpeg">
 </audio>
 
+<!-- MAIN CARD -->
 <div class="card">
   <h1>Sweetheart 💖</h1>
   <div class="subtitle">Will you be my Valentine?</div>
@@ -156,86 +209,86 @@ canvas {
   <div id="message"></div>
 </div>
 
+<!-- FOREVER SCREEN -->
 <div id="forever">
   <h2>Sweetheart</h2>
-  <div>Together since 22 September 2023 💕</div>
+  <div id="dateText">Together since 22 September 2023 💕</div>
   <div id="ring">💍</div>
 
+  <p>
+    Every moment with you matters.<br>
+    Every second counts ❤️
+  </p>
+
   <div class="counter">
-    <div><span id="days">0</span><br><small>Days</small></div>
-    <div><span id="hours">0</span><br><small>Hours</small></div>
-    <div><span id="minutes">0</span><br><small>Minutes</small></div>
-    <div><span id="seconds">0</span><br><small>Seconds</small></div>
+    <div><span id="days">0</span><small>Days</small></div>
+    <div><span id="hours">0</span><small>Hours</small></div>
+    <div><span id="minutes">0</span><small>Minutes</small></div>
+    <div><span id="seconds">0</span><small>Seconds</small></div>
   </div>
 </div>
 
 <canvas id="fx"></canvas>
 
 <script>
-const noBtn = document.getElementById("noBtn");
 const yesBtn = document.getElementById("yesBtn");
-const msg = document.getElementById("message");
-const forever = document.getElementById("forever");
-const music = document.getElementById("music");
+const noBtn  = document.getElementById("noBtn");
+const msg    = document.getElementById("message");
+const music  = document.getElementById("music");
+const forever= document.getElementById("forever");
 
-/* NO BUTTON – SUPER RESPONSIVE */
-function escape() {
-  const padding = 20;
-  const maxX = window.innerWidth - noBtn.offsetWidth - padding;
-  const maxY = window.innerHeight - noBtn.offsetHeight - padding;
+/* Funny NO */
+const jokes = [
+  "Sweetheart… think again 🥺",
+  "My heart skipped 💔",
+  "I’ll bring chocolates 🍫",
+  "Flowers too 🌹",
+  "Unlimited hugs 🤗",
+  "You’re smiling 😏"
+];
+let j = 0;
 
-  noBtn.style.left = Math.random() * maxX + "px";
-  noBtn.style.top = Math.random() * maxY + "px";
-}
-
-["pointerenter", "touchstart"].forEach(evt => {
-  noBtn.addEventListener(evt, (e) => {
-    e.preventDefault();
-    escape();
-    msg.textContent = "😂 Nice try!";
-  });
+noBtn.addEventListener("mouseenter", () => {
+  noBtn.style.transform =
+    `translate(${Math.random()*160-80}px,
+               ${Math.random()*160-80}px)`;
+  msg.textContent = jokes[j++ % jokes.length];
 });
 
 /* YES */
 yesBtn.onclick = () => {
   music.play();
-  msg.textContent = "You chose love ❤️";
-  hearts();
+  msg.textContent = "You just made me the happiest person alive 💖";
   fireworks();
-  setTimeout(() => forever.style.opacity = 1, 3000);
-};
+  hearts();
 
-/* HEARTS */
-function hearts() {
-  setInterval(() => {
-    const h = document.createElement("div");
-    h.textContent = "❤️";
-    h.style.position = "fixed";
-    h.style.left = Math.random() * 100 + "vw";
-    h.style.bottom = "0";
-    h.style.fontSize = "22px";
-    h.style.animation = "float 4s linear";
-    document.body.appendChild(h);
-    setTimeout(() => h.remove(), 4000);
-  }, 300);
-}
+  setTimeout(() => {
+    forever.style.opacity = 1;
+    forever.style.pointerEvents = "auto";
+  }, 3500);
+};
 
 /* FIREWORKS */
 const canvas = document.getElementById("fx");
 const ctx = canvas.getContext("2d");
-canvas.width = innerWidth;
-canvas.height = innerHeight;
+resize();
+window.addEventListener("resize", resize);
+
+function resize() {
+  canvas.width = innerWidth;
+  canvas.height = innerHeight;
+}
 
 let parts = [];
 function fireworks() {
   setInterval(() => {
-    for (let i = 0; i < 40; i++) {
+    for (let i = 0; i < 50; i++) {
       parts.push({
-        x: innerWidth / 2,
-        y: innerHeight / 2,
-        dx: (Math.random() - 0.5) * 6,
-        dy: (Math.random() - 0.5) * 6,
-        life: 100
+        x: innerWidth/2,
+        y: innerHeight/2,
+        dx:(Math.random()-0.5)*6,
+        dy:(Math.random()-0.5)*6,
+        life:100
       });
     }
   }, 450);
@@ -253,17 +306,48 @@ function animate() {
   requestAnimationFrame(animate);
 }
 
-/* COUNTER */
+/* HEARTS */
+function hearts() {
+  setInterval(()=>{
+    const h=document.createElement("div");
+    h.textContent="❤️";
+    h.style.position="fixed";
+    h.style.left=Math.random()*100+"vw";
+    h.style.bottom="0";
+    h.style.fontSize="22px";
+    h.style.animation="float 4s linear";
+    document.body.appendChild(h);
+    setTimeout(()=>h.remove(),4000);
+  },280);
+}
+
+/* TOGETHER SINCE COUNTER */
 const startDate = new Date("2023-09-22T00:00:00");
-setInterval(() => {
-  let diff = Math.floor((new Date() - startDate)/1000);
-  days.textContent = Math.floor(diff/86400);
+
+function updateCounter() {
+  const now = new Date();
+  let diff = Math.floor((now - startDate) / 1000);
+
+  const days = Math.floor(diff / 86400);
   diff %= 86400;
-  hours.textContent = Math.floor(diff/3600);
+  const hours = Math.floor(diff / 3600);
   diff %= 3600;
-  minutes.textContent = Math.floor(diff/60);
-  seconds.textContent = diff%60;
-}, 1000);
+  const minutes = Math.floor(diff / 60);
+  const seconds = diff % 60;
+
+  daysEl.textContent = days;
+  hoursEl.textContent = hours;
+  minutesEl.textContent = minutes;
+  secondsEl.textContent = seconds;
+}
+
+const daysEl = document.getElementById("days");
+const hoursEl = document.getElementById("hours");
+const minutesEl = document.getElementById("minutes");
+const secondsEl = document.getElementById("seconds");
+
+setInterval(updateCounter, 1000);
+updateCounter();
 </script>
 
 </body>
