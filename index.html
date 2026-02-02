@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8" />
 <title>For My Sweetheart ❤️</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="A special Valentine website made with love ❤️">
+<meta name="author" content="Shivam Ardalkar">
 
 <style>
 :root {
@@ -20,45 +23,54 @@
 body {
   margin: 0;
   min-height: 100vh;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+               Roboto, Helvetica, Arial, sans-serif;
   background: linear-gradient(135deg, var(--bg1), var(--bg2));
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   overflow: hidden;
 }
 
-/* ================= CARD ================= */
+/* ===== GLASS CARD ===== */
 .card {
   background: var(--glass);
   backdrop-filter: var(--blur);
   border-radius: 28px;
-  padding: 36px 28px 40px;
+  padding: 40px 28px;
   width: min(92%, 420px);
   text-align: center;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.25);
-  position: relative;
+  box-shadow:
+    0 20px 60px rgba(0,0,0,0.25),
+    inset 0 0 0 1px rgba(255,255,255,0.2);
+  animation: cardIn 1.2s ease;
   z-index: 2;
+}
+
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(40px) scale(0.95); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 h1 {
   margin: 0;
+  font-size: 1.9rem;
   color: var(--primary);
 }
 
 .subtitle {
   margin-top: 10px;
+  font-size: 1.1rem;
 }
 
-/* ================= BUTTON ZONE ================= */
-.buttons-zone {
-  margin-top: 26px;
-  position: relative;
-  height: 64px;           /* fixed zone */
+/* ===== BUTTONS ===== */
+.buttons {
+  margin-top: 28px;
   display: flex;
   justify-content: center;
-  align-items: center;
-  gap: 18px;
+  gap: 16px;
+  position: relative;
 }
 
 button {
@@ -67,41 +79,52 @@ button {
   font-size: 1rem;
   border-radius: 999px;
   cursor: pointer;
-  touch-action: manipulation;
-  white-space: nowrap;
+  transition: transform 0.2s ease;
 }
 
-/* YES BUTTON */
 #yesBtn {
   background: linear-gradient(135deg, var(--primary), var(--secondary));
   color: white;
-  z-index: 3;
+  z-index: 2;
 }
 
-/* NO BUTTON */
+#yesBtn:hover { transform: scale(1.08); }
+
 #noBtn {
-  background: rgba(255,255,255,0.95);
-  position: relative;     /* IMPORTANT */
-  z-index: 2;
-  transition: transform 0.15s ease;
+  background: rgba(255,255,255,0.7);
+  position: relative;
+  z-index: 1;
 }
 
 /* Shake animation */
 @keyframes shake {
   0%,100% { transform: translateX(0); }
-  25% { transform: translateX(-6px); }
-  50% { transform: translateX(6px); }
-  75% { transform: translateX(-4px); }
+  25% { transform: translateX(-5px); }
+  50% { transform: translateX(5px); }
+  75% { transform: translateX(-3px); }
 }
 
-/* MESSAGE */
 #message {
-  margin-top: 20px;
-  min-height: 22px;
+  margin-top: 22px;
+  font-size: 1.05rem;
   color: var(--primary);
+  min-height: 24px;
 }
 
-/* ================= FOREVER SCREEN ================= */
+/* ===== CANVAS ===== */
+canvas {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* ===== HEARTS ===== */
+@keyframes float {
+  from { transform: translateY(0); opacity: 1; }
+  to   { transform: translateY(-120vh); opacity: 0; }
+}
+
+/* ===== FOREVER SCREEN ===== */
 #forever {
   position: fixed;
   inset: 0;
@@ -118,19 +141,45 @@ button {
   z-index: 10;
 }
 
+#forever h2 {
+  font-size: 2.6rem;
+  margin-bottom: 6px;
+}
+
+#dateText {
+  font-size: 1rem;
+  opacity: 0.85;
+  margin-bottom: 14px;
+}
+
 #ring {
   font-size: 90px;
   margin: 18px 0;
-  animation: pulse 2s infinite;
+  opacity: 0;
+  animation:
+    ringDrop 1.8s ease forwards,
+    ringGlow 2.5s ease-in-out infinite 1.8s;
 }
 
-@keyframes pulse {
-  0%,100% { transform: scale(1); }
-  50% { transform: scale(1.15); }
+@keyframes ringDrop {
+  from { transform: translateY(-200px) scale(0.3); opacity: 0; }
+  to   { transform: translateY(0) scale(1); opacity: 1; }
 }
 
-/* COUNTER */
+@keyframes ringGlow {
+  0%,100% { filter: drop-shadow(0 0 10px gold); }
+  50%     { filter: drop-shadow(0 0 25px gold); }
+}
+
+#forever p {
+  font-size: 1.15rem;
+  line-height: 1.6;
+  max-width: 85%;
+}
+
+/* ===== COUNTER ===== */
 .counter {
+  margin-top: 20px;
   display: grid;
   grid-template-columns: repeat(4, auto);
   gap: 14px;
@@ -138,20 +187,27 @@ button {
 
 .counter div {
   background: rgba(255,255,255,0.15);
-  padding: 12px;
+  padding: 12px 14px;
   border-radius: 16px;
+  min-width: 70px;
 }
 
-/* EFFECTS */
-canvas {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
+.counter span {
+  display: block;
+  font-size: 1.4rem;
+  font-weight: bold;
 }
 
-@keyframes float {
-  from { transform: translateY(0); opacity: 1; }
-  to { transform: translateY(-120vh); opacity: 0; }
+.counter small {
+  font-size: 0.75rem;
+  opacity: 0.85;
+}
+
+/* ===== FOOTER ===== */
+footer {
+  margin-top: 18px;
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.9);
 }
 </style>
 </head>
@@ -159,7 +215,7 @@ canvas {
 <body>
 
 <audio id="music" loop>
-  <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_1c6d8a2b7f.mp3">
+  <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_1c6d8a2b7f.mp3" type="audio/mpeg">
 </audio>
 
 <!-- MAIN CARD -->
@@ -167,7 +223,7 @@ canvas {
   <h1>Sweetheart 💖</h1>
   <div class="subtitle">Will you be my Valentine?</div>
 
-  <div class="buttons-zone" id="btnZone">
+  <div class="buttons" id="btnArea">
     <button id="yesBtn">Yes ❤️</button>
     <button id="noBtn">No 😏</button>
   </div>
@@ -175,54 +231,69 @@ canvas {
   <div id="message"></div>
 </div>
 
-<!-- FOREVER -->
+<!-- FOREVER SCREEN -->
 <div id="forever">
   <h2>Sweetheart</h2>
-  <div>Together since 22 September 2023 💕</div>
+  <div id="dateText">Together since 22 September 2023 💕</div>
   <div id="ring">💍</div>
 
+  <p>
+    Every moment with you matters.<br>
+    Every second counts ❤️
+  </p>
+
   <div class="counter">
-    <div><span id="days">0</span><br><small>Days</small></div>
-    <div><span id="hours">0</span><br><small>Hours</small></div>
-    <div><span id="minutes">0</span><br><small>Minutes</small></div>
-    <div><span id="seconds">0</span><br><small>Seconds</small></div>
+    <div><span id="days">0</span><small>Days</small></div>
+    <div><span id="hours">0</span><small>Hours</small></div>
+    <div><span id="minutes">0</span><small>Minutes</small></div>
+    <div><span id="seconds">0</span><small>Seconds</small></div>
   </div>
 </div>
 
 <canvas id="fx"></canvas>
 
-<script>
-const noBtn = document.getElementById("noBtn");
-const yesBtn = document.getElementById("yesBtn");
-const zone = document.getElementById("btnZone");
-const msg = document.getElementById("message");
-const forever = document.getElementById("forever");
-const music = document.getElementById("music");
+<footer>
+  © 2026 Shivam Ardalkar · Made with ❤️
+</footer>
 
+<script>
+const yesBtn = document.getElementById("yesBtn");
+const noBtn  = document.getElementById("noBtn");
+const msg    = document.getElementById("message");
+const music  = document.getElementById("music");
+const forever= document.getElementById("forever");
+const btnArea= document.getElementById("btnArea");
+
+/* Funny NO */
+const jokes = [
+  "Nice try 😏 but you’re stuck with me ❤️",
+  "Oops… NO is under maintenance 😂",
+  "My heart already said YES 💖",
+  "Even this button ships us 💕",
+  "Sweetheart… think again 🥺",
+  "Okay okay… I tried 😄"
+];
+let j = 0;
 let escapeCount = 0;
 const MAX_ESCAPES = 7;
 
-/* 🧲 MAGNETIC, BOUNDED ESCAPE (NO OVERLAP) */
-zone.addEventListener("mousemove", handleMove);
-zone.addEventListener("touchmove", handleMove, { passive: false });
+/* MAGNETIC + SHAKE NO BUTTON (SAFE & BOUNDED) */
+btnArea.addEventListener("mousemove", handleMove);
+btnArea.addEventListener("touchmove", handleMove, { passive: false });
 
 function handleMove(e) {
   if (escapeCount >= MAX_ESCAPES) return;
 
-  const zoneRect = zone.getBoundingClientRect();
   const btnRect = noBtn.getBoundingClientRect();
+  const areaRect = btnArea.getBoundingClientRect();
 
   const px = e.touches ? e.touches[0].clientX : e.clientX;
-  const py = e.touches ? e.touches[0].clientY : e.clientY;
-
   const cx = btnRect.left + btnRect.width / 2;
-  const cy = btnRect.top + btnRect.height / 2;
 
   const dx = cx - px;
-  const dy = cy - py;
-  const distance = Math.hypot(dx, dy);
+  const distance = Math.abs(dx);
 
-  if (distance < 70) {
+  if (distance < 80) {
     escapeCount++;
 
     if (distance < 40) {
@@ -230,10 +301,10 @@ function handleMove(e) {
       setTimeout(() => noBtn.style.animation = "", 300);
     }
 
-    let offsetX = Math.max(-40, Math.min(40, dx * 0.3));
+    let offsetX = Math.max(-40, Math.min(40, dx * 0.4));
     noBtn.style.transform = `translateX(${offsetX}px)`;
 
-    msg.textContent = "😄 Nice try!";
+    msg.textContent = jokes[j++ % jokes.length];
   }
 
   if (escapeCount === MAX_ESCAPES) {
@@ -246,43 +317,37 @@ function handleMove(e) {
 /* YES */
 yesBtn.onclick = () => {
   music.play();
-  msg.textContent = "You chose love ❤️";
-  hearts();
+  msg.textContent = "You just made me the happiest person alive 💖";
   fireworks();
-  setTimeout(() => forever.style.opacity = 1, 3000);
+  hearts();
+
+  setTimeout(() => {
+    forever.style.opacity = 1;
+    forever.style.pointerEvents = "auto";
+  }, 3500);
 };
 
-/* ❤️ HEARTS */
-function hearts() {
-  setInterval(() => {
-    const h = document.createElement("div");
-    h.textContent = "❤️";
-    h.style.position = "fixed";
-    h.style.left = Math.random() * 100 + "vw";
-    h.style.bottom = "0";
-    h.style.fontSize = "22px";
-    h.style.animation = "float 4s linear";
-    document.body.appendChild(h);
-    setTimeout(() => h.remove(), 4000);
-  }, 300);
-}
-
-/* 🎆 FIREWORKS */
+/* FIREWORKS */
 const canvas = document.getElementById("fx");
 const ctx = canvas.getContext("2d");
-canvas.width = innerWidth;
-canvas.height = innerHeight;
+resize();
+window.addEventListener("resize", resize);
+
+function resize() {
+  canvas.width = innerWidth;
+  canvas.height = innerHeight;
+}
 
 let parts = [];
 function fireworks() {
   setInterval(() => {
-    for (let i = 0; i < 40; i++) {
+    for (let i = 0; i < 50; i++) {
       parts.push({
-        x: innerWidth / 2,
-        y: innerHeight / 2,
-        dx: (Math.random() - 0.5) * 5,
-        dy: (Math.random() - 0.5) * 5,
-        life: 100
+        x: innerWidth/2,
+        y: innerHeight/2,
+        dx:(Math.random()-0.5)*6,
+        dy:(Math.random()-0.5)*6,
+        life:100
       });
     }
   }, 450);
@@ -300,17 +365,43 @@ function animate() {
   requestAnimationFrame(animate);
 }
 
-/* ⏱ COUNTER */
+/* HEARTS */
+function hearts() {
+  setInterval(()=>{
+    const h=document.createElement("div");
+    h.textContent="❤️";
+    h.style.position="fixed";
+    h.style.left=Math.random()*100+"vw";
+    h.style.bottom="0";
+    h.style.fontSize="22px";
+    h.style.animation="float 4s linear";
+    document.body.appendChild(h);
+    setTimeout(()=>h.remove(),4000);
+  },280);
+}
+
+/* TOGETHER SINCE COUNTER */
 const startDate = new Date("2023-09-22T00:00:00");
-setInterval(() => {
-  let diff = Math.floor((new Date() - startDate)/1000);
-  days.textContent = Math.floor(diff/86400);
+
+function updateCounter() {
+  const now = new Date();
+  let diff = Math.floor((now - startDate) / 1000);
+
+  days.textContent = Math.floor(diff / 86400);
   diff %= 86400;
-  hours.textContent = Math.floor(diff/3600);
+  hours.textContent = Math.floor(diff / 3600);
   diff %= 3600;
-  minutes.textContent = Math.floor(diff/60);
-  seconds.textContent = diff%60;
-}, 1000);
+  minutes.textContent = Math.floor(diff / 60);
+  seconds.textContent = diff % 60;
+}
+
+const days = document.getElementById("days");
+const hours = document.getElementById("hours");
+const minutes = document.getElementById("minutes");
+const seconds = document.getElementById("seconds");
+
+setInterval(updateCounter, 1000);
+updateCounter();
 </script>
 
 </body>
