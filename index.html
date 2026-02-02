@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8">
 <title>For My Sweetheart ❤️</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 :root {
@@ -20,7 +20,7 @@
 body {
   margin: 0;
   min-height: 100vh;
-  font-family: system-ui, -apple-system;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont;
   background: linear-gradient(135deg, var(--bg1), var(--bg2));
   display: flex;
   justify-content: center;
@@ -33,7 +33,7 @@ body {
   background: var(--glass);
   backdrop-filter: var(--blur);
   border-radius: 28px;
-  padding: 40px 28px;
+  padding: 36px 28px 40px;
   width: min(92%, 420px);
   text-align: center;
   box-shadow: 0 20px 60px rgba(0,0,0,0.25);
@@ -41,14 +41,24 @@ body {
   z-index: 2;
 }
 
-h1 { color: var(--primary); margin: 0; }
-.subtitle { margin-top: 10px; }
+h1 {
+  margin: 0;
+  color: var(--primary);
+}
 
-/* ================= BUTTON AREA ================= */
-.buttons {
-  margin-top: 28px;
+.subtitle {
+  margin-top: 10px;
+}
+
+/* ================= BUTTON ZONE ================= */
+.buttons-zone {
+  margin-top: 26px;
   position: relative;
-  height: 70px;
+  height: 64px;           /* fixed zone */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 18px;
 }
 
 button {
@@ -58,23 +68,22 @@ button {
   border-radius: 999px;
   cursor: pointer;
   touch-action: manipulation;
-  transition: transform 0.2s ease;
+  white-space: nowrap;
 }
 
+/* YES BUTTON */
 #yesBtn {
   background: linear-gradient(135deg, var(--primary), var(--secondary));
   color: white;
-  position: relative;
-  z-index: 2;
+  z-index: 3;
 }
 
-#yesBtn:hover { transform: scale(1.08); }
-
+/* NO BUTTON */
 #noBtn {
   background: rgba(255,255,255,0.95);
-  position: absolute;
-  left: 55%;
-  top: 0;
+  position: relative;     /* IMPORTANT */
+  z-index: 2;
+  transition: transform 0.15s ease;
 }
 
 /* Shake animation */
@@ -85,14 +94,14 @@ button {
   75% { transform: translateX(-4px); }
 }
 
-/* ================= MESSAGE ================= */
+/* MESSAGE */
 #message {
-  margin-top: 22px;
+  margin-top: 20px;
+  min-height: 22px;
   color: var(--primary);
-  min-height: 24px;
 }
 
-/* ================= FOREVER ================= */
+/* ================= FOREVER SCREEN ================= */
 #forever {
   position: fixed;
   inset: 0;
@@ -120,7 +129,7 @@ button {
   50% { transform: scale(1.15); }
 }
 
-/* ================= COUNTER ================= */
+/* COUNTER */
 .counter {
   display: grid;
   grid-template-columns: repeat(4, auto);
@@ -133,6 +142,7 @@ button {
   border-radius: 16px;
 }
 
+/* EFFECTS */
 canvas {
   position: fixed;
   inset: 0;
@@ -152,11 +162,12 @@ canvas {
   <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_1c6d8a2b7f.mp3">
 </audio>
 
+<!-- MAIN CARD -->
 <div class="card">
   <h1>Sweetheart 💖</h1>
   <div class="subtitle">Will you be my Valentine?</div>
 
-  <div class="buttons" id="btnArea">
+  <div class="buttons-zone" id="btnZone">
     <button id="yesBtn">Yes ❤️</button>
     <button id="noBtn">No 😏</button>
   </div>
@@ -164,6 +175,7 @@ canvas {
   <div id="message"></div>
 </div>
 
+<!-- FOREVER -->
 <div id="forever">
   <h2>Sweetheart</h2>
   <div>Together since 22 September 2023 💕</div>
@@ -182,7 +194,7 @@ canvas {
 <script>
 const noBtn = document.getElementById("noBtn");
 const yesBtn = document.getElementById("yesBtn");
-const btnArea = document.getElementById("btnArea");
+const zone = document.getElementById("btnZone");
 const msg = document.getElementById("message");
 const forever = document.getElementById("forever");
 const music = document.getElementById("music");
@@ -190,24 +202,27 @@ const music = document.getElementById("music");
 let escapeCount = 0;
 const MAX_ESCAPES = 7;
 
-/* 🧲 Magnetic escape */
-function magneticEscape(e) {
+/* 🧲 MAGNETIC, BOUNDED ESCAPE (NO OVERLAP) */
+zone.addEventListener("mousemove", handleMove);
+zone.addEventListener("touchmove", handleMove, { passive: false });
+
+function handleMove(e) {
   if (escapeCount >= MAX_ESCAPES) return;
 
+  const zoneRect = zone.getBoundingClientRect();
   const btnRect = noBtn.getBoundingClientRect();
-  const areaRect = btnArea.getBoundingClientRect();
+
+  const px = e.touches ? e.touches[0].clientX : e.clientX;
+  const py = e.touches ? e.touches[0].clientY : e.clientY;
 
   const cx = btnRect.left + btnRect.width / 2;
   const cy = btnRect.top + btnRect.height / 2;
-
-  const px = e.clientX || (e.touches && e.touches[0].clientX);
-  const py = e.clientY || (e.touches && e.touches[0].clientY);
 
   const dx = cx - px;
   const dy = cy - py;
   const distance = Math.hypot(dx, dy);
 
-  if (distance < 80) {
+  if (distance < 70) {
     escapeCount++;
 
     if (distance < 40) {
@@ -215,28 +230,18 @@ function magneticEscape(e) {
       setTimeout(() => noBtn.style.animation = "", 300);
     }
 
-    let nx = noBtn.offsetLeft + dx * 0.4;
-    let ny = noBtn.offsetTop + dy * 0.4;
-
-    nx = Math.max(0, Math.min(nx, areaRect.width - btnRect.width));
-    ny = Math.max(0, Math.min(ny, areaRect.height - btnRect.height));
-
-    noBtn.style.left = nx + "px";
-    noBtn.style.top = ny + "px";
+    let offsetX = Math.max(-40, Math.min(40, dx * 0.3));
+    noBtn.style.transform = `translateX(${offsetX}px)`;
 
     msg.textContent = "😄 Nice try!";
   }
 
-  /* ♿ Accessibility fallback */
   if (escapeCount === MAX_ESCAPES) {
+    noBtn.style.transform = "translateX(0)";
     noBtn.textContent = "Okay… you win 😳";
     msg.textContent = "I’ll stop running now 💖";
   }
 }
-
-["mousemove", "touchmove"].forEach(evt => {
-  btnArea.addEventListener(evt, magneticEscape, { passive: false });
-});
 
 /* YES */
 yesBtn.onclick = () => {
