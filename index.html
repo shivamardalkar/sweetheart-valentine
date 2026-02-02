@@ -74,7 +74,24 @@ button {
   font-size: 1rem;
   border-radius: 999px;
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.3s ease;
+  transition: transform 0.12s ease, box-shadow 0.3s ease;
+
+  /* ✅ MOBILE FIXES */
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+
+button:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+/* Press-down animation */
+button:active {
+  transform: scale(0.94);
 }
 
 #yesBtn {
@@ -117,7 +134,7 @@ canvas {
   to   { transform: translateY(-120vh); opacity: 0; }
 }
 
-/* ===== FOREVER SCREEN ===== */
+/* ===== FOREVER SCREEN (UNCHANGED) ===== */
 #forever {
   position: fixed;
   inset: 0;
@@ -245,9 +262,7 @@ const msg    = document.getElementById("message");
 const music  = document.getElementById("music");
 const forever= document.getElementById("forever");
 
-/* ===============================
-   FUNNY NO MESSAGES (EXTENDED)
-================================ */
+/* FUNNY MESSAGES */
 const jokes = [
   "Sweetheart… think again 🥺",
   "My heart skipped 💔",
@@ -256,27 +271,21 @@ const jokes = [
   "Unlimited hugs 🤗",
   "You’re smiling 😏",
   "Okay… that smile says YES 😄",
-  "This NO button is just pretending 🙈",
-  "Destiny is laughing right now 💕",
-  "Love loading… please wait ⏳",
+  "Destiny is laughing 💕",
   "Still here? That means you care ❤️",
   "Alright… I’ll wait forever 💍"
 ];
 
 let j = 0;
-
-/* Slow down message change */
 let lastJokeTime = 0;
-const JOKE_DELAY = 900; // ms
+const JOKE_DELAY = 900;
 
-/* YES glow after 5 seconds */
+/* YES glow after 5s */
 const glowTimer = setTimeout(() => {
   yesBtn.classList.add("glow");
 }, 5000);
 
-/* ===============================
-   FUNNY NO BUTTON BEHAVIOR
-================================ */
+/* FUNNY NO BUTTON */
 function moveNoAway(x, y) {
   const rect = noBtn.getBoundingClientRect();
   const cx = rect.left + rect.width / 2;
@@ -284,9 +293,9 @@ function moveNoAway(x, y) {
 
   const dx = cx - x;
   const dy = cy - y;
-  const distance = Math.sqrt(dx*dx + dy*dy);
+  const dist = Math.sqrt(dx*dx + dy*dy);
 
-  if (distance < 90) {
+  if (dist < 90) {
     const moveX = Math.max(-60, Math.min(60, dx * 0.5));
     const moveY = Math.max(-40, Math.min(40, dy * 0.4));
     noBtn.style.transform = `translate(${moveX}px, ${moveY}px)`;
@@ -296,31 +305,29 @@ function moveNoAway(x, y) {
       msg.textContent = jokes[j++ % jokes.length];
       lastJokeTime = now;
     }
+
+    /* 📳 HAPTIC FEEDBACK (mobile) */
+    if (navigator.vibrate) navigator.vibrate(10);
   }
 }
 
 /* Desktop */
-document.addEventListener("mousemove", (e) => {
+document.addEventListener("mousemove", e => {
   moveNoAway(e.clientX, e.clientY);
 });
 
 /* Mobile */
-document.addEventListener("touchstart", (e) => {
-  const t = e.touches[0];
-  moveNoAway(t.clientX, t.clientY);
+document.addEventListener("touchstart", e => {
+  moveNoAway(e.touches[0].clientX, e.touches[0].clientY);
 });
 
 /* NO click */
-noBtn.addEventListener("click", (e) => {
+noBtn.addEventListener("click", e => {
   e.preventDefault();
   noBtn.style.transform =
     `translate(${Math.random()*80-40}px, ${Math.random()*60-30}px)`;
 
-  const now = Date.now();
-  if (now - lastJokeTime > JOKE_DELAY) {
-    msg.textContent = jokes[j++ % jokes.length];
-    lastJokeTime = now;
-  }
+  if (navigator.vibrate) navigator.vibrate([20, 30, 20]);
 });
 
 /* YES */
@@ -405,4 +412,3 @@ const seconds = document.getElementById("seconds");
 
 </body>
 </html>
-
