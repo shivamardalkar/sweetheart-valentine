@@ -33,7 +33,7 @@ body {
   overflow: hidden;
 }
 
-/* ===== GLASS CARD ===== */
+/* ===== CARD ===== */
 .card {
   background: var(--glass);
   backdrop-filter: var(--blur);
@@ -41,9 +41,7 @@ body {
   padding: 40px 28px;
   width: min(92%, 420px);
   text-align: center;
-  box-shadow:
-    0 20px 60px rgba(0,0,0,0.25),
-    inset 0 0 0 1px rgba(255,255,255,0.2);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.25);
   animation: cardIn 1.2s ease;
   z-index: 2;
 }
@@ -53,23 +51,15 @@ body {
   to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-h1 {
-  margin: 0;
-  font-size: 1.9rem;
-  color: var(--primary);
-}
-
-.subtitle {
-  margin-top: 10px;
-  font-size: 1.1rem;
-}
+h1 { margin: 0; color: var(--primary); }
+.subtitle { margin-top: 10px; }
 
 /* ===== BUTTONS ===== */
 .buttons {
   margin-top: 28px;
   display: flex;
   justify-content: center;
-  gap: 16px;
+  gap: 18px;
   position: relative;
 }
 
@@ -79,31 +69,45 @@ button {
   font-size: 1rem;
   border-radius: 999px;
   cursor: pointer;
-  transition: transform 0.2s ease;
+  transition: transform 0.15s ease, box-shadow 0.3s ease;
+  touch-action: none;
 }
 
+/* YES BUTTON */
 #yesBtn {
   background: linear-gradient(135deg, var(--primary), var(--secondary));
   color: white;
-  z-index: 2;
 }
 
-#yesBtn:hover { transform: scale(1.08); }
+/* 🌟 YES GLOW ANIMATION */
+@keyframes yesGlow {
+  0% {
+    box-shadow: 0 0 0 rgba(255,46,99,0.0);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow:
+      0 0 14px rgba(255,46,99,0.9),
+      0 0 28px rgba(255,143,163,0.8);
+    transform: scale(1.08);
+  }
+  100% {
+    box-shadow: 0 0 0 rgba(255,46,99,0.0);
+    transform: scale(1);
+  }
+}
+
+#yesBtn.glow {
+  animation: yesGlow 1.6s ease-in-out infinite;
+}
 
 #noBtn {
   background: rgba(255,255,255,0.75);
   position: relative;
-  z-index: 1;
+  will-change: transform;
 }
 
-/* Shake animation */
-@keyframes shake {
-  0%,100% { transform: translateX(0); }
-  25% { transform: translateX(-5px); }
-  50% { transform: translateX(5px); }
-  75% { transform: translateX(-3px); }
-}
-
+/* ===== MESSAGE ===== */
 #message {
   margin-top: 22px;
   font-size: 1.05rem;
@@ -111,20 +115,7 @@ button {
   min-height: 24px;
 }
 
-/* ===== CANVAS ===== */
-canvas {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-}
-
-/* ===== HEARTS ===== */
-@keyframes float {
-  from { transform: translateY(0); opacity: 1; }
-  to   { transform: translateY(-120vh); opacity: 0; }
-}
-
-/* ===== FOREVER SCREEN ===== */
+/* ===== FOREVER ===== */
 #forever {
   position: fixed;
   inset: 0;
@@ -141,33 +132,15 @@ canvas {
   z-index: 10;
 }
 
-#forever h2 {
-  font-size: 2.6rem;
-  margin-bottom: 6px;
-}
-
-#dateText {
-  font-size: 1rem;
-  opacity: 0.85;
-  margin-bottom: 14px;
-}
-
 #ring {
   font-size: 90px;
   margin: 18px 0;
-  animation:
-    ringDrop 1.8s ease forwards,
-    ringGlow 2.5s ease-in-out infinite 1.8s;
+  animation: pulse 2s infinite;
 }
 
-@keyframes ringDrop {
-  from { transform: translateY(-200px) scale(0.3); opacity: 0; }
-  to   { transform: translateY(0) scale(1); opacity: 1; }
-}
-
-@keyframes ringGlow {
-  0%,100% { filter: drop-shadow(0 0 10px gold); }
-  50%     { filter: drop-shadow(0 0 25px gold); }
+@keyframes pulse {
+  0%,100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
 }
 
 /* ===== COUNTER ===== */
@@ -180,23 +153,22 @@ canvas {
 
 .counter div {
   background: rgba(255,255,255,0.15);
-  padding: 12px 14px;
+  padding: 12px;
   border-radius: 16px;
-  min-width: 70px;
 }
 
-.counter span {
-  display: block;
-  font-size: 1.4rem;
-  font-weight: bold;
+/* ===== EFFECTS ===== */
+canvas {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
 }
 
-.counter small {
-  font-size: 0.75rem;
-  opacity: 0.85;
+@keyframes float {
+  from { transform: translateY(0); opacity: 1; }
+  to { transform: translateY(-120vh); opacity: 0; }
 }
 
-/* ===== FOOTER ===== */
 footer {
   margin-top: 18px;
   font-size: 0.8rem;
@@ -208,10 +180,9 @@ footer {
 <body>
 
 <audio id="music" loop>
-  <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_1c6d8a2b7f.mp3" type="audio/mpeg">
+  <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_1c6d8a2b7f.mp3">
 </audio>
 
-<!-- MAIN CARD -->
 <div class="card">
   <h1>Sweetheart 💖</h1>
   <div class="subtitle">Will you be my Valentine?</div>
@@ -224,22 +195,16 @@ footer {
   <div id="message"></div>
 </div>
 
-<!-- FOREVER SCREEN -->
 <div id="forever">
   <h2>Sweetheart</h2>
-  <div id="dateText">Together since 22 September 2023 💕</div>
+  <div>Together since 22 September 2023 💕</div>
   <div id="ring">💍</div>
 
-  <p>
-    Every moment with you matters.<br>
-    Every second counts ❤️
-  </p>
-
   <div class="counter">
-    <div><span id="days">0</span><small>Days</small></div>
-    <div><span id="hours">0</span><small>Hours</small></div>
-    <div><span id="minutes">0</span><small>Minutes</small></div>
-    <div><span id="seconds">0</span><small>Seconds</small></div>
+    <div><span id="days">0</span><br><small>Days</small></div>
+    <div><span id="hours">0</span><br><small>Hours</small></div>
+    <div><span id="minutes">0</span><br><small>Minutes</small></div>
+    <div><span id="seconds">0</span><br><small>Seconds</small></div>
   </div>
 </div>
 
@@ -257,7 +222,7 @@ const music  = document.getElementById("music");
 const forever= document.getElementById("forever");
 const btnArea= document.getElementById("btnArea");
 
-/* Funny NO messages (never ending 😄) */
+/* Funny NO messages */
 const jokes = [
   "Sweetheart… think again 🥺",
   "My heart skipped 💔",
@@ -265,43 +230,43 @@ const jokes = [
   "Flowers too 🌹",
   "Unlimited hugs 🤗",
   "You’re smiling 😏",
-  "This NO button is shy 🙈",
   "Even destiny says YES 💕",
-  "Plot twist: NO is not allowed 😌",
-  "Okay okay… just try YES once ❤️"
+  "Just tap YES already 😄"
 ];
 let j = 0;
 
-/* MAGNETIC + SHAKE NO BUTTON (STABLE & SAFE) */
-btnArea.addEventListener("mousemove", handleMove);
-btnArea.addEventListener("touchmove", handleMove, { passive: false });
+/* ⭐ YES GLOW AFTER 5 SECONDS */
+let glowTimer = setTimeout(() => {
+  yesBtn.classList.add("glow");
+}, 5000);
 
-function handleMove(e) {
-  const btnRect = noBtn.getBoundingClientRect();
-  const px = e.touches ? e.touches[0].clientX : e.clientX;
-  const cx = btnRect.left + btnRect.width / 2;
+/* NO BUTTON – STABLE MAGNETIC MOVE */
+btnArea.addEventListener("pointermove", (e) => {
+  const rect = noBtn.getBoundingClientRect();
+  const cx = rect.left + rect.width / 2;
+  const px = e.clientX;
+
   const dx = cx - px;
   const distance = Math.abs(dx);
 
-  if (distance < 80) {
-    if (distance < 40) {
-      noBtn.style.animation = "shake 0.3s";
-      setTimeout(() => noBtn.style.animation = "", 300);
-    }
-
-    const offsetX = Math.max(-40, Math.min(40, dx * 0.4));
-    noBtn.style.transform = `translateX(${offsetX}px)`;
-
+  if (distance < 90) {
+    const push = Math.max(-36, Math.min(36, dx * 0.35));
+    noBtn.style.transform = `translateX(${push}px)`;
     msg.textContent = jokes[j++ % jokes.length];
+  } else {
+    noBtn.style.transform = "translateX(0)";
   }
-}
+});
 
 /* YES */
 yesBtn.onclick = () => {
+  clearTimeout(glowTimer);
+  yesBtn.classList.remove("glow");
+
   music.play();
   msg.textContent = "You just made me the happiest person alive 💖";
-  fireworks();
   hearts();
+  fireworks();
 
   setTimeout(() => {
     forever.style.opacity = 1;
@@ -312,23 +277,18 @@ yesBtn.onclick = () => {
 /* FIREWORKS */
 const canvas = document.getElementById("fx");
 const ctx = canvas.getContext("2d");
-resize();
-window.addEventListener("resize", resize);
-
-function resize() {
-  canvas.width = innerWidth;
-  canvas.height = innerHeight;
-}
+canvas.width = innerWidth;
+canvas.height = innerHeight;
 
 let parts = [];
 function fireworks() {
   setInterval(() => {
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < 40; i++) {
       parts.push({
-        x: innerWidth/2,
-        y: innerHeight/2,
-        dx:(Math.random()-0.5)*6,
-        dy:(Math.random()-0.5)*6,
+        x: innerWidth / 2,
+        y: innerHeight / 2,
+        dx:(Math.random()-0.5)*5,
+        dy:(Math.random()-0.5)*5,
         life:100
       });
     }
@@ -362,28 +322,17 @@ function hearts() {
   },280);
 }
 
-/* TOGETHER SINCE COUNTER */
+/* COUNTER */
 const startDate = new Date("2023-09-22T00:00:00");
-
-function updateCounter() {
-  const now = new Date();
-  let diff = Math.floor((now - startDate) / 1000);
-
-  days.textContent = Math.floor(diff / 86400);
+setInterval(() => {
+  let diff = Math.floor((new Date() - startDate)/1000);
+  days.textContent = Math.floor(diff/86400);
   diff %= 86400;
-  hours.textContent = Math.floor(diff / 3600);
+  hours.textContent = Math.floor(diff/3600);
   diff %= 3600;
-  minutes.textContent = Math.floor(diff / 60);
-  seconds.textContent = diff % 60;
-}
-
-const days = document.getElementById("days");
-const hours = document.getElementById("hours");
-const minutes = document.getElementById("minutes");
-const seconds = document.getElementById("seconds");
-
-setInterval(updateCounter, 1000);
-updateCounter();
+  minutes.textContent = Math.floor(diff/60);
+  seconds.textContent = diff%60;
+}, 1000);
 </script>
 
 </body>
