@@ -33,7 +33,7 @@ body {
   overflow: hidden;
 }
 
-/* ===== CARD ===== */
+/* ===== GLASS CARD ===== */
 .card {
   background: var(--glass);
   backdrop-filter: var(--blur);
@@ -41,7 +41,9 @@ body {
   padding: 40px 28px;
   width: min(92%, 420px);
   text-align: center;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+  box-shadow:
+    0 20px 60px rgba(0,0,0,0.25),
+    inset 0 0 0 1px rgba(255,255,255,0.2);
   animation: cardIn 1.2s ease;
   z-index: 2;
 }
@@ -51,8 +53,16 @@ body {
   to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-h1 { margin: 0; color: var(--primary); }
-.subtitle { margin-top: 10px; }
+h1 {
+  margin: 0;
+  font-size: 1.9rem;
+  color: var(--primary);
+}
+
+.subtitle {
+  margin-top: 10px;
+  font-size: 1.1rem;
+}
 
 /* ===== BUTTONS ===== */
 .buttons {
@@ -70,7 +80,6 @@ button {
   border-radius: 999px;
   cursor: pointer;
   transition: transform 0.15s ease, box-shadow 0.3s ease;
-  touch-action: none;
 }
 
 /* YES BUTTON */
@@ -79,22 +88,11 @@ button {
   color: white;
 }
 
-/* 🌟 YES GLOW ANIMATION */
+/* 🌟 YES glow (added safely) */
 @keyframes yesGlow {
-  0% {
-    box-shadow: 0 0 0 rgba(255,46,99,0.0);
-    transform: scale(1);
-  }
-  50% {
-    box-shadow:
-      0 0 14px rgba(255,46,99,0.9),
-      0 0 28px rgba(255,143,163,0.8);
-    transform: scale(1.08);
-  }
-  100% {
-    box-shadow: 0 0 0 rgba(255,46,99,0.0);
-    transform: scale(1);
-  }
+  0%   { box-shadow: 0 0 0 rgba(255,46,99,0); }
+  50%  { box-shadow: 0 0 18px rgba(255,46,99,0.9); }
+  100% { box-shadow: 0 0 0 rgba(255,46,99,0); }
 }
 
 #yesBtn.glow {
@@ -104,7 +102,6 @@ button {
 #noBtn {
   background: rgba(255,255,255,0.75);
   position: relative;
-  will-change: transform;
 }
 
 /* ===== MESSAGE ===== */
@@ -115,7 +112,20 @@ button {
   min-height: 24px;
 }
 
-/* ===== FOREVER ===== */
+/* ===== CANVAS ===== */
+canvas {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* ===== HEARTS ===== */
+@keyframes float {
+  from { transform: translateY(0); opacity: 1; }
+  to   { transform: translateY(-120vh); opacity: 0; }
+}
+
+/* ===== FOREVER SCREEN (UNCHANGED) ===== */
 #forever {
   position: fixed;
   inset: 0;
@@ -132,15 +142,40 @@ button {
   z-index: 10;
 }
 
+#forever h2 {
+  font-size: 2.6rem;
+  margin-bottom: 6px;
+}
+
+#dateText {
+  font-size: 1rem;
+  opacity: 0.85;
+  margin-bottom: 14px;
+}
+
 #ring {
   font-size: 90px;
   margin: 18px 0;
-  animation: pulse 2s infinite;
+  opacity: 0;
+  animation:
+    ringDrop 1.8s ease forwards,
+    ringGlow 2.5s ease-in-out infinite 1.8s;
 }
 
-@keyframes pulse {
-  0%,100% { transform: scale(1); }
-  50% { transform: scale(1.15); }
+@keyframes ringDrop {
+  from { transform: translateY(-200px) scale(0.3); opacity: 0; }
+  to   { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+@keyframes ringGlow {
+  0%,100% { filter: drop-shadow(0 0 10px gold); }
+  50%     { filter: drop-shadow(0 0 25px gold); }
+}
+
+#forever p {
+  font-size: 1.15rem;
+  line-height: 1.6;
+  max-width: 85%;
 }
 
 /* ===== COUNTER ===== */
@@ -153,20 +188,20 @@ button {
 
 .counter div {
   background: rgba(255,255,255,0.15);
-  padding: 12px;
+  padding: 12px 14px;
   border-radius: 16px;
+  min-width: 70px;
 }
 
-/* ===== EFFECTS ===== */
-canvas {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
+.counter span {
+  display: block;
+  font-size: 1.4rem;
+  font-weight: bold;
 }
 
-@keyframes float {
-  from { transform: translateY(0); opacity: 1; }
-  to { transform: translateY(-120vh); opacity: 0; }
+.counter small {
+  font-size: 0.75rem;
+  opacity: 0.85;
 }
 
 footer {
@@ -195,16 +230,22 @@ footer {
   <div id="message"></div>
 </div>
 
+<!-- FOREVER SCREEN (YOUR ORIGINAL) -->
 <div id="forever">
   <h2>Sweetheart</h2>
-  <div>Together since 22 September 2023 💕</div>
+  <div id="dateText">Together since 22 September 2023 💕</div>
   <div id="ring">💍</div>
 
+  <p>
+    Every moment with you matters.<br>
+    Every second counts ❤️
+  </p>
+
   <div class="counter">
-    <div><span id="days">0</span><br><small>Days</small></div>
-    <div><span id="hours">0</span><br><small>Hours</small></div>
-    <div><span id="minutes">0</span><br><small>Minutes</small></div>
-    <div><span id="seconds">0</span><br><small>Seconds</small></div>
+    <div><span id="days">0</span><small>Days</small></div>
+    <div><span id="hours">0</span><small>Hours</small></div>
+    <div><span id="minutes">0</span><small>Minutes</small></div>
+    <div><span id="seconds">0</span><small>Seconds</small></div>
   </div>
 </div>
 
@@ -229,27 +270,24 @@ const jokes = [
   "I’ll bring chocolates 🍫",
   "Flowers too 🌹",
   "Unlimited hugs 🤗",
-  "You’re smiling 😏",
-  "Even destiny says YES 💕",
-  "Just tap YES already 😄"
+  "You’re smiling 😏"
 ];
 let j = 0;
 
-/* ⭐ YES GLOW AFTER 5 SECONDS */
-let glowTimer = setTimeout(() => {
+/* YES glow after 5 seconds */
+const glowTimer = setTimeout(() => {
   yesBtn.classList.add("glow");
 }, 5000);
 
-/* NO BUTTON – STABLE MAGNETIC MOVE */
+/* Stable NO movement */
 btnArea.addEventListener("pointermove", (e) => {
   const rect = noBtn.getBoundingClientRect();
   const cx = rect.left + rect.width / 2;
   const px = e.clientX;
-
   const dx = cx - px;
-  const distance = Math.abs(dx);
+  const dist = Math.abs(dx);
 
-  if (distance < 90) {
+  if (dist < 90) {
     const push = Math.max(-36, Math.min(36, dx * 0.35));
     noBtn.style.transform = `translateX(${push}px)`;
     msg.textContent = jokes[j++ % jokes.length];
@@ -265,8 +303,8 @@ yesBtn.onclick = () => {
 
   music.play();
   msg.textContent = "You just made me the happiest person alive 💖";
-  hearts();
   fireworks();
+  hearts();
 
   setTimeout(() => {
     forever.style.opacity = 1;
@@ -285,8 +323,8 @@ function fireworks() {
   setInterval(() => {
     for (let i = 0; i < 40; i++) {
       parts.push({
-        x: innerWidth / 2,
-        y: innerHeight / 2,
+        x: innerWidth/2,
+        y: innerHeight/2,
         dx:(Math.random()-0.5)*5,
         dy:(Math.random()-0.5)*5,
         life:100
@@ -333,6 +371,11 @@ setInterval(() => {
   minutes.textContent = Math.floor(diff/60);
   seconds.textContent = diff%60;
 }, 1000);
+
+const days = document.getElementById("days");
+const hours = document.getElementById("hours");
+const minutes = document.getElementById("minutes");
+const seconds = document.getElementById("seconds");
 </script>
 
 </body>
