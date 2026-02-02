@@ -60,7 +60,7 @@ h1 {
   font-size: 1.1rem;
 }
 
-/* ===== BUTTONS (UNCHANGED LAYOUT) ===== */
+/* ===== BUTTONS ===== */
 .buttons {
   margin-top: 28px;
   display: flex;
@@ -82,13 +82,12 @@ button {
   color: white;
 }
 
-/* 🌟 YES BUTTON GLOW (RESTORED) */
+/* YES glow */
 @keyframes yesGlow {
   0%   { box-shadow: 0 0 0 rgba(255,46,99,0); }
   50%  { box-shadow: 0 0 18px rgba(255,46,99,0.9); }
   100% { box-shadow: 0 0 0 rgba(255,46,99,0); }
 }
-
 #yesBtn.glow {
   animation: yesGlow 1.6s ease-in-out infinite;
 }
@@ -118,7 +117,7 @@ canvas {
   to   { transform: translateY(-120vh); opacity: 0; }
 }
 
-/* ===== FOREVER SCREEN (UNCHANGED) ===== */
+/* ===== FOREVER SCREEN ===== */
 #forever {
   position: fixed;
   inset: 0;
@@ -246,26 +245,39 @@ const msg    = document.getElementById("message");
 const music  = document.getElementById("music");
 const forever= document.getElementById("forever");
 
-/* Funny NO messages */
+/* ===============================
+   FUNNY NO MESSAGES (EXTENDED)
+================================ */
 const jokes = [
   "Sweetheart… think again 🥺",
   "My heart skipped 💔",
   "I’ll bring chocolates 🍫",
   "Flowers too 🌹",
   "Unlimited hugs 🤗",
-  "You’re smiling 😏"
+  "You’re smiling 😏",
+  "Okay… that smile says YES 😄",
+  "I already told my mom about you 😌",
+  "This NO button is just pretending 🙈",
+  "Destiny is laughing right now 💕",
+  "Love loading… please wait ⏳",
+  "Still here? That means you care ❤️",
+  "Alright… I’ll wait forever 💍"
 ];
+
 let j = 0;
 
-/* ⭐ YES BUTTON GLOW AFTER 5 SECONDS (RESTORED) */
+/* Slow down message change */
+let lastJokeTime = 0;
+const JOKE_DELAY = 900; // ms
+
+/* YES glow after 5 seconds */
 const glowTimer = setTimeout(() => {
   yesBtn.classList.add("glow");
 }, 5000);
 
-/* =======================
-   FUNNY NO BUTTON LOGIC
-   (ONLY BEHAVIOR CHANGED)
-======================= */
+/* ===============================
+   FUNNY NO BUTTON BEHAVIOR
+================================ */
 function moveNoAway(x, y) {
   const rect = noBtn.getBoundingClientRect();
   const cx = rect.left + rect.width / 2;
@@ -279,7 +291,12 @@ function moveNoAway(x, y) {
     const moveX = Math.max(-60, Math.min(60, dx * 0.5));
     const moveY = Math.max(-40, Math.min(40, dy * 0.4));
     noBtn.style.transform = `translate(${moveX}px, ${moveY}px)`;
-    msg.textContent = jokes[j++ % jokes.length];
+
+    const now = Date.now();
+    if (now - lastJokeTime > JOKE_DELAY) {
+      msg.textContent = jokes[j++ % jokes.length];
+      lastJokeTime = now;
+    }
   }
 }
 
@@ -294,17 +311,22 @@ document.addEventListener("touchstart", (e) => {
   moveNoAway(t.clientX, t.clientY);
 });
 
-/* If NO is tapped */
+/* NO click */
 noBtn.addEventListener("click", (e) => {
   e.preventDefault();
   noBtn.style.transform =
     `translate(${Math.random()*80-40}px, ${Math.random()*60-30}px)`;
-  msg.textContent = jokes[j++ % jokes.length];
+
+  const now = Date.now();
+  if (now - lastJokeTime > JOKE_DELAY) {
+    msg.textContent = jokes[j++ % jokes.length];
+    lastJokeTime = now;
+  }
 });
 
 /* YES */
 yesBtn.onclick = () => {
-  clearTimeout(glowTimer);      // stop glow
+  clearTimeout(glowTimer);
   yesBtn.classList.remove("glow");
 
   music.play();
